@@ -4,14 +4,77 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ChatterUp</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+      }
+      #chat {
+        flex: 2;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+      #users {
+        flex: 1;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+      .notification {
+        color: green;
+        font-style: italic;
+        margin: 5px 0;
+      }
+    </style>
   </head>
   <body>
-    <h1>ChatterUp</h1>
+    <div id="chat">
+      <h3 id="welcome"></h3>
+      <div id="messages"></div>
+    </div>
+
+    <div id="users">
+      <h3>Online Users</h3>
+      <ul id="userList"></ul>
+    </div>
 
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
-      console.log("Socket connected:", socket.id);
+
+      let username = "";
+
+      while (!username) {
+        username = prompt("Enter your name");
+        if (username) {
+          username = username.trim();
+        }
+      }
+      
+      const welcome = document.getElementById("welcome");
+      const messages = document.getElementById("messages");
+      const userList = document.getElementById("userList");
+
+      welcome.innerText = `Welcome ${username}`;
+
+      socket.emit("join", username);
+
+      socket.on("notification", (data) => {
+        const div = document.createElement("div");
+        div.className = "notification";
+        div.innerText = data.message;
+        messages.appendChild("div");
+      });
+
+      socket.on("users:update", (users) => {
+        userList.innerHTML = "";
+        users.forEach((user) => {
+          const li = document.createElement("li");
+          li.innerText = user;
+          userList.appendChild(li);
+        });
+      });
     </script>
   </body>
 </html>
