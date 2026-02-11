@@ -36,6 +36,12 @@
       </div>
     </div>
 
+    <audio
+      id="notificationSound"
+      src="notifications.wav"
+      preload="auto"
+    ></audio>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
@@ -53,6 +59,7 @@
       const input = document.getElementById("messageInput");
       const userCount = document.getElementById("userCount");
       const typingIndicator = document.getElementById("typingIndicator");
+      const notificationSound = document.getElementById("notificationSound");
 
       welcome.innerText = `Welcome ${username}`;
       socket.emit("join", username);
@@ -72,6 +79,18 @@
 
       // Receive new message
       socket.on("chat:message", (message) => {
+        console.log("Incoming message:", message);
+        console.log("My username:", username);
+        console.log("Message username:", message.username);
+
+        if (message.username !== username) {
+          console.log("Playing sound...");
+          notificationSound.currentTime = 0;
+          notificationSound.play().catch((err) => {
+            console.log("Audio play blocked:", err);
+          });
+        }
+
         addMessage(message);
       });
 
@@ -136,7 +155,7 @@
         const time = new Date(message.createdAt).toLocaleTimeString();
 
         const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${message.username}`;
-        
+
         div.innerHTML = `
           <img class="avatar" src="${avatarUrl}" />
           <div class="content">

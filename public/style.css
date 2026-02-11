@@ -1,3 +1,4 @@
+/* GLOBAL */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -9,7 +10,7 @@ body {
   height: 100vh;
 }
 
-/* ================= CHAT SECTION ================= */
+/* CHAT SECTION */
 
 .chat-section {
   flex: 3;
@@ -36,7 +37,7 @@ body {
   color: gray;
 }
 
-/* ================= MESSAGES ================= */
+/* MESSAGES */
 
 .messages {
   flex: 1;
@@ -68,7 +69,7 @@ body {
   padding: 10px 12px;
   border-radius: 12px;
   max-width: 60%;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .message.own .content {
@@ -88,7 +89,7 @@ body {
   text-align: right;
 }
 
-/* ================= INPUT AREA ================= */
+/* INPUT AREA */
 
 .input-area {
   display: flex;
@@ -119,16 +120,12 @@ button:hover {
   background: #1ebe5d;
 }
 
-/* ================= TYPING INDICATOR ================= */
-
 .typing {
   font-style: italic;
   font-size: 14px;
   color: #666;
   margin-bottom: 5px;
 }
-
-/* ================= SYSTEM MESSAGE ================= */
 
 .system-message {
   text-align: center;
@@ -137,15 +134,13 @@ button:hover {
   margin: 10px 0;
 }
 
-/* ================= EMPTY STATE ================= */
-
 .empty {
   text-align: center;
   color: gray;
   margin-top: 20px;
 }
 
-/* ================= USERS SECTION ================= */
+/* USERS SECTION */
 
 .users-section {
   flex: 1;
@@ -180,17 +175,22 @@ button:hover {
   margin-right: 8px;
 }
 
-/* ================= ANIMATIONS ================= */
+/* ANIMATIONS */
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ================= MOBILE RESPONSIVE ================= */
 
 @media (max-width: 768px) {
-
   .container {
     flex-direction: column;
     height: auto;
