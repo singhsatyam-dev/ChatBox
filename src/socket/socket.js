@@ -1,9 +1,15 @@
+import { Message } from "../models/message.model.js";
+
 //socket id => username
 const users = new Map();
 
 export const socketHandler = (io) => {
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     console.log("User connected:", socket.id);
+
+    //sends chat history to new user
+    const messages = await Message.find().sort({ createdAt: 1 });
+    socket.emit("chat:history", messages);
 
     //user join with username
     socket.on("join", (username) => {
@@ -16,6 +22,20 @@ export const socketHandler = (io) => {
 
       //send updated users list
       io.emit("users:update", Array.from(users.values()));
+    });
+
+    //handles incoming messages
+    socket.on("chat:message", async (text) => {
+      const username = users.get(socket.id);
+
+      if (!username || !text.trim()) return;
+
+      const message = await Message.create({
+        username,
+        text,
+      });
+
+      io.emit("chat:message", message);
     });
 
     //handle disconnect

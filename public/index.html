@@ -4,34 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ChatterUp</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-      }
-      #chat {
-        flex: 2;
-        border: 1px solid #ccc;
-        padding: 10px;
-      }
-      #users {
-        flex: 1;
-        border: 1px solid #ccc;
-        padding: 10px;
-      }
-      .notification {
-        color: green;
-        font-style: italic;
-        margin: 5px 0;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="chat">
       <h3 id="welcome"></h3>
       <div id="messages"></div>
+
+      <form id="messageForm">
+        <input
+          id="messageInput"
+          placeholder="Type a message..."
+          autocomplete="off"
+        />
+        <button>Send</button>
+      </form>
     </div>
 
     <div id="users">
@@ -51,22 +38,37 @@
           username = username.trim();
         }
       }
-      
+
       const welcome = document.getElementById("welcome");
       const messages = document.getElementById("messages");
       const userList = document.getElementById("userList");
+      const form = document.getElementById("messageForm");
+      const input = document.getElementById("messageInput");
 
       welcome.innerText = `Welcome ${username}`;
 
       socket.emit("join", username);
 
+      //loads chat history
+      socket.on("chat:history", (history) => {
+        history.forEach(addMessage);
+      });
+
+      //receives message
+      socket.on("chat:message", (message) => {
+        console.log("Message received on frontend:", message);
+        addMessage(message);
+      });
+
+      //notifications
       socket.on("notification", (data) => {
         const div = document.createElement("div");
         div.className = "notification";
         div.innerText = data.message;
-        messages.appendChild("div");
+        messages.appendChild(div);
       });
 
+      // user lists
       socket.on("users:update", (users) => {
         userList.innerHTML = "";
         users.forEach((user) => {
@@ -75,6 +77,21 @@
           userList.appendChild(li);
         });
       });
+
+      //send message
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        socket.emit("chat:message", input.value);
+        input.value = "";
+      });
+
+      function addMessage(message) {
+        const div = document.createElement("div");
+        div.style.margin = "5px 0";
+        div.innerHTML = `<strong>${message.username}:</strong> ${message.text}`;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
     </script>
   </body>
 </html>
