@@ -1,97 +1,134 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ChatterUp</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div id="chat">
-      <h3 id="welcome"></h3>
-      <div id="messages"></div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ChatterUp</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-      <form id="messageForm">
-        <input
-          id="messageInput"
-          placeholder="Type a message..."
-          autocomplete="off"
-        />
+  <div class="container">
+
+    <div class="chat-section">
+      <h2 id="welcome"></h2>
+
+      <div id="messages" class="messages"></div>
+
+      <div id="typingIndicator" class="typing"></div>
+
+      <form id="messageForm" class="input-area">
+        <input id="messageInput" placeholder="Type a message..." autocomplete="off" />
         <button>Send</button>
       </form>
     </div>
 
-    <div id="users">
+    <div class="users-section">
       <h3>Online Users</h3>
       <ul id="userList"></ul>
     </div>
 
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script>
-      const socket = io();
+  </div>
 
-      let username = "";
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
 
-      while (!username) {
-        username = prompt("Enter your name");
-        if (username) {
-          username = username.trim();
-        }
-      }
+    let username = "";
+    while (!username) {
+      username = prompt("Enter your name");
+      if (username) username = username.trim();
+    }
 
-      const welcome = document.getElementById("welcome");
-      const messages = document.getElementById("messages");
-      const userList = document.getElementById("userList");
-      const form = document.getElementById("messageForm");
-      const input = document.getElementById("messageInput");
+    const welcome = document.getElementById("welcome");
+    const messages = document.getElementById("messages");
+    const userList = document.getElementById("userList");
+    const form = document.getElementById("messageForm");
+    const input = document.getElementById("messageInput");
+    const typingIndicator = document.getElementById("typingIndicator");
 
-      welcome.innerText = `Welcome ${username}`;
+    welcome.innerText = `Welcome ${username}`;
+    socket.emit("join", username);
 
-      socket.emit("join", username);
+    // Generate avatar color
+    function getAvatarColor(name) {
+      const colors = ["#FF5733", "#33FF57", "#3357FF", "#F39C12", "#8E44AD"];
+      let index = name.charCodeAt(0) % colors.length;
+      return colors[index];
+    }
 
-      //loads chat history
-      socket.on("chat:history", (history) => {
-        history.forEach(addMessage);
+    // Chat history
+    socket.on("chat:history", (history) => {
+      history.forEach(addMessage);
+    });
+
+    // Receive new message
+    socket.on("chat:message", (message) => {
+      addMessage(message);
+    });
+
+    // Typing indicator
+    let typingTimeout;
+
+    input.addEventListener("input", () => {
+      socket.emit("typing");
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        typingIndicator.innerText = "";
+      }, 1000);
+    });
+
+    socket.on("typing", (name) => {
+      typingIndicator.innerText = `${name} is typing...`;
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        typingIndicator.innerText = "";
+      }, 1000);
+    });
+
+    // Users list
+    socket.on("users:update", (users) => {
+      userList.innerHTML = "";
+      users.forEach((user) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="dot"></span> ${user}`;
+        userList.appendChild(li);
       });
+    });
 
-      //receives message
-      socket.on("chat:message", (message) => {
-        console.log("Message received on frontend:", message);
-        addMessage(message);
-      });
-
-      //notifications
-      socket.on("notification", (data) => {
-        const div = document.createElement("div");
-        div.className = "notification";
-        div.innerText = data.message;
-        messages.appendChild(div);
-      });
-
-      // user lists
-      socket.on("users:update", (users) => {
-        userList.innerHTML = "";
-        users.forEach((user) => {
-          const li = document.createElement("li");
-          li.innerText = user;
-          userList.appendChild(li);
-        });
-      });
-
-      //send message
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
+    // Send message
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (input.value.trim()) {
         socket.emit("chat:message", input.value);
         input.value = "";
-      });
-
-      function addMessage(message) {
-        const div = document.createElement("div");
-        div.style.margin = "5px 0";
-        div.innerHTML = `<strong>${message.username}:</strong> ${message.text}`;
-        messages.appendChild(div);
-        messages.scrollTop = messages.scrollHeight;
       }
-    </script>
-  </body>
+    });
+
+    // function to add message
+    function addMessage(message) {
+      const div = document.createElement("div");
+      const isOwn = message.username === username;
+
+      div.className = isOwn ? "message own" : "message";
+
+      const time = new Date(message.createdAt).toLocaleTimeString();
+
+      div.innerHTML = `
+        <div class="avatar" style="background:${getAvatarColor(message.username)}">
+          ${message.username[0].toUpperCase()}
+        </div>
+        <div class="content">
+          <div class="name">${message.username}</div>
+          <div>${message.text}</div>
+          <div class="time">${time}</div>
+        </div>
+      `;
+
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+
+</body>
 </html>

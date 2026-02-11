@@ -38,6 +38,15 @@ export const socketHandler = (io) => {
       io.emit("chat:message", message);
     });
 
+    // typing indicator
+    socket.on("typing", () => {
+      const username = users.get(socket.id);
+
+      if (username) {
+        socket.broadcast.emit("typing", username);
+      }
+    });
+
     //handle disconnect
     socket.on("disconnect", () => {
       const username = users.get(socket.id);
