@@ -79,12 +79,7 @@
 
       // Receive new message
       socket.on("chat:message", (message) => {
-        console.log("Incoming message:", message);
-        console.log("My username:", username);
-        console.log("Message username:", message.username);
-
         if (message.username !== username) {
-          console.log("Playing sound...");
           notificationSound.currentTime = 0;
           notificationSound.play().catch((err) => {
             console.log("Audio play blocked:", err);
