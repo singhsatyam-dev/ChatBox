@@ -15,6 +15,12 @@ export const socketHandler = (io) => {
     socket.on("join", (username) => {
       users.set(socket.id, username);
 
+      socket.emit("chat:message", {
+        username: "System",
+        text: `Welcome ${username}! Start chatting 🚀`,
+        createdAt: new Date(),
+      });
+
       //notification to everyone
       socket.broadcast.emit("notification", {
         message: `${username} joined the chat`,

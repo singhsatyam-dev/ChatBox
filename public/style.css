@@ -38,9 +38,13 @@ body {
   flex-direction: row-reverse;
 }
 
+.message.own .content {
+  background: #d1f5d3;
+}
+
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   color: white;
   display: flex;
@@ -93,4 +97,37 @@ button {
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#userCount {
+  font-size: 14px;
+  color: gray;
+}
+
+.empty {
+  text-align: center;
+  color: gray;
+  margin-top: 20px;
+}
+
+.system-message {
+  text-align: center;
+  font-style: italic;
+  color: #888;
+  margin: 10px 0;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
