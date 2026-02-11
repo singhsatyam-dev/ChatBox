@@ -135,16 +135,16 @@
 
         const time = new Date(message.createdAt).toLocaleTimeString();
 
+        const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${message.username}`;
+        
         div.innerHTML = `
-        <div class="avatar" style="background:${getAvatarColor(message.username)}">
-          ${message.username[0].toUpperCase()}
-        </div>
-        <div class="content">
-          <div class="name">${message.username}</div>
-          <div>${message.text}</div>
-          <div class="time">${time}</div>
-        </div>
-      `;
+          <img class="avatar" src="${avatarUrl}" />
+          <div class="content">
+            <div class="name">${message.username}</div>
+            <div>${message.text}</div>
+            <div class="time">${time}</div>
+          </div>
+        `;
 
         messages.appendChild(div);
         messages.scrollTop = messages.scrollHeight;
