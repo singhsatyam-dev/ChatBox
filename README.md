@@ -164,27 +164,18 @@ npm run dev
 
 ### Chat Interface
 
-```md
-![Chat Interface](./screenshots/chat-interface.png)
-```
+<img width="1851" height="957" alt="Realtime Chat" src="https://github.com/user-attachments/assets/35db1f11-d980-4f5e-9fe0-b25de3f6712e" />
+
 
 ### Online Users
 
-```md
-![Online Users](./screenshots/online-users.png)
-```
+<img width="485" height="275" alt="online users" src="https://github.com/user-attachments/assets/f34e922b-b0b9-4d7d-bb6b-202e1abfadeb" />
 
-### Typing Indicator
-
-```md
-![Typing Indicator](./screenshots/typing-indicator.png)
-```
 
 ### Mobile Responsive View
 
-```md
-![Mobile View](./screenshots/mobile-view.png)
-```
+<img width="472" height="684" alt="image" src="https://github.com/user-attachments/assets/4b6ba221-b077-4d73-bf22-d576feb71583" />
+
 
 ---
 
