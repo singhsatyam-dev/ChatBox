@@ -48,6 +48,9 @@ This project was built to gain hands-on experience with **real-time communicatio
 
 * Works across desktop and mobile devices
 
+### Message Sound
+. It has a notification sound when a message is sent.
+
 ---
 
 ## 🛠️ Tech Stack
